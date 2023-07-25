@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from math import floor, pi, sqrt
 import numpy as np
 from scipy.sparse.linalg import bicgstab
@@ -84,11 +83,10 @@ class FHProblem:
         n0 = self.n0
         tau0 = float(self.tau0)
         xfref, nref, openings_ini = read_datfile_axisym(filepath)
-        # Para axisymmetric
+        # Para plane strain
         if abs(xfref-0.692/0.374*self.Kstar**(2/3)*tau0**(2/27))/xfref > 0.1:
             print("WARNING: FLUID FRACTION XF IN FILEINI DOES NOT MATCH SOLUTION AT INITIAL TIME")
             
-
         gs = 0.374*self.Kstar**(-2/3)
         gfs = 0.692
         alpg = 10/27
@@ -243,7 +241,6 @@ class FHProblem:
     def search_opening(self, mf, Omk, A, AllinvAlc, vecs0, D, S, domold, dtold ,phi):
         ind = 1
         k1 = 0
-        d = 2
         err1 = 1
         dtdz3 = dtold / self.dz**3
         phi0 = self.phit[self.step - 1]
@@ -336,7 +333,7 @@ class FHProblem:
 if __name__ == "__main__":
 
     # .txt Obtenidos del codigo original para comparar
-    gt_ref, gft_ref, xft_ref, tau_ref = get_all_references_case(2)
+    gt_ref, gft_ref, xft_ref, tau_ref = get_all_references_case(7)
 
     problem = FHProblem(data)
     max_steps = (problem.nmax - problem.n0)

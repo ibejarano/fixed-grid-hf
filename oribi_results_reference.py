@@ -11,7 +11,6 @@ from plot_utilities import plot_variable_vs_time
 from read_ini import read_datfile_axisym
 from test_numpy_funcs import read_matrix
 
-
 def calculo_Kstar():
     # K utilizados
     

@@ -14,8 +14,13 @@ Format for data in fileini for d = 2: (Axysimmetric)
  
  
 """
+
+import os
+
+INIT_DATS_DIRECTORY = "init_dats"
+
 def read_datfile_axisym(filepath):
-    with open("init_dats/" + filepath, "r") as f:
+    with open(os.path.join(INIT_DATS_DIRECTORY, filepath), "r") as f:
         l = f.readlines()
         xf = float(l[0])
         nref = int(l[1]) 
@@ -23,14 +28,12 @@ def read_datfile_axisym(filepath):
     assert nref == len(openings)
     return xf, nref, openings
 
-# Deprecated
 def read_datfile_plane_strain(filepath):
-    raise Exception("Deprecated")
-    with open("Oribi_Overtex1.dat", "r") as f:
+
+    with open(os.path.join(INIT_DATS_DIRECTORY, filepath), "r") as f:
         l = f.readlines()
         Kstar = float(l[0])
         gs, gfs, nref = [float(i) for i in l[1].split()]
         openings = [float(i) for i in l[2:]]
     assert nref == len(openings)
     return Kstar, gs, gfs, nref, openings
-

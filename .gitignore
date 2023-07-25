@@ -1,0 +1,8 @@
+.DS_Store
+.vscode/settings.json
+.pylintrc
+.DS_Store
+
+*.pyc
+__pycache__/read_ini.cpython-310.pyc
+__pycache__/
