@@ -15,7 +15,7 @@ Format for data in fileini for d = 2: (Axysimmetric)
  
 """
 def read_datfile_axisym(filepath):
-    with open(filepath, "r") as f:
+    with open("init_dats/" + filepath, "r") as f:
         l = f.readlines()
         xf = float(l[0])
         nref = int(l[1]) 

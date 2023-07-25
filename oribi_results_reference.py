@@ -39,7 +39,6 @@ def get_reference_var(caseNum, var):
 
     """
     assert caseNum in range(1,8)
-    print(var)
     assert var in ["gt", "gft", "xft", "tau"]
     
     SSTARS = [10, 10, 25, 45, 90, 5, 1]

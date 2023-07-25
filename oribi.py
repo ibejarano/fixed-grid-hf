@@ -138,7 +138,7 @@ class FHProblem:
         self.dz = g0/self.n0
         
     def remesh(self):
-        print("REMESHING")
+        print("Remeshing...")
         mfref = int(self.mft[self.step])
         self.update_dz()
         xf = self.gft[self.step]/self.gt[self.step]
@@ -214,7 +214,7 @@ class FHProblem:
             gf = gfnew 
     
             if (k3 == self.k3max) and (err3 > self.eps3):
-                print("NOT CONVERGET . SETTING AVERAGED VALUE")
+                print(" ::: NOT CONVERGED. SETTING AVERAGED VALUE ::: ")
                 gf = 0.5*(gf + gfval1)
                 V = 0.5*(V+Vval1)
                 mf = floor(gf/self.dz)

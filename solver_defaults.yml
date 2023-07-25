@@ -13,7 +13,7 @@ mesh:
   mjump: 10
 time_parameters:
   tau0: 1e-16
-  taumax: 1e-14
+  taumax: 1e-5
   dtratio: 1.05
 parameters:
   Sstar: 10
