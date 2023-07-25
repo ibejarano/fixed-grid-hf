@@ -13,9 +13,9 @@ mesh:
   mjump: 10
 time_parameters:
   tau0: 1e-16
-  taumax: 1e-13
+  taumax: 1e-10
   dtratio: 1.05
 parameters:
-  Sstar: 1
-  Kstar: 1.3
-dat_filepath: Oribi_Overtex7.dat
+  Sstar: 0.18311
+  Kstar: 10.74
+dat_filepath: Oribi_Overtex1.dat

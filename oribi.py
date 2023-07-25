@@ -11,6 +11,7 @@ from oribi_linksys import build_matrices
 from search_root import Secante
 from read_ini import read_datfile_axisym
 from oribi_results_reference import get_all_references_case
+from dimensionalize import dimensionalize
 
 with open("solver_defaults.yml", "r") as stream:
     try:
@@ -332,9 +333,6 @@ class FHProblem:
 
 if __name__ == "__main__":
 
-    # .txt Obtenidos del codigo original para comparar
-    gt_ref, gft_ref, xft_ref, tau_ref = get_all_references_case(7)
-
     problem = FHProblem(data)
     max_steps = (problem.nmax - problem.n0)
     taumax = float(problem.taumax)
@@ -349,15 +347,16 @@ if __name__ == "__main__":
     tau0 = float(problem.tau0)
     taumax = float(problem.taumax)
     plt.plot(problem.tau[:problem.step] ,problem.xft[:problem.step])
-    plt.plot(tau_ref, xft_ref, "ro", markersize=1)
     plt.ylim(( np.min(problem.xft[:problem.step]),np.max(problem.xft[:problem.step])))
     plt.xlim((tau0, taumax))
     plt.title("Fluid fraction")
     plt.xscale("log")
     plt.show()
-    plt.plot(problem.tau[:problem.step], problem.gft[:problem.step])
-    plt.plot(tau_ref, gft_ref, "ro", markersize=1)
+
+    Tdim, Ldim = dimensionalize()
+    plt.plot(problem.tau[:problem.step] * Tdim, problem.gft[:problem.step] * Ldim)
     plt.title("Fluid front")
     plt.xscale("log")
-    plt.xlim((tau0, taumax))
-    plt.ylim((np.min(problem.gft[:problem.step]),np.max(problem.gft[:problem.step])))
+    plt.xlim((tau0*Tdim, taumax*Tdim))
+    #plt.ylim((np.min(problem.gft[:problem.step]),np.max(problem.gft[:problem.step])))
+    plt.show()
