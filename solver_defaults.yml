@@ -1,0 +1,21 @@
+max_iterations:
+  k1max: 10
+  k2max: 6
+  k3max: 10
+tolerances:
+  eps1: 1e-4
+  eps2: 1e-4
+  eps3: 1e-3
+mesh:
+  n0: 60
+  nmax: 90
+  ncycles: 20
+  mjump: 10
+time_parameters:
+  tau0: 1e-16
+  taumax: 1e-14
+  dtratio: 1.05
+parameters:
+  Sstar: 10
+  Kstar: 1
+dat_filepath: Oribi_Overtex2.dat
