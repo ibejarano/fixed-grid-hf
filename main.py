@@ -6,8 +6,7 @@ from oribi_results_reference import get_all_references_case, get_reference_adime
 import matplotlib.pyplot as plt
 import numpy as np
 ###
-ref_case = 1
-
+ref_case = 2
 Kref, Sref = get_reference_adimensionals(ref_case)
 gt_ref, gft_ref, xft_ref, tau_ref = get_all_references_case(ref_case)
 ###

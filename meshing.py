@@ -14,30 +14,20 @@ class CartesianMesh:
     nmin = 60
     nmax = 90
     def __init__(self):
-        """
-        Parameters
-        ----------
-        g : float
-            Mesh semi-long, dimensionless
-
-        Returns
-        -------
-        None.
-
-        """
         self.current = self.nmin
         
     def add_element(self):
         self.current += 1
     
-    def init_channel(self, n, xf, V, dz):
+    def init_channel(self, xf, V):
+        dz = self.dz
+        n = self.current
         self.channel = FluidChannelMesh(n, xf, V, dz)
-        self.current = n
     
-    def remesh(self):
+    def remesh(self, gtLast):
         #TODO Quedan mas cositas
-        raise Exception("Remeshing not implemented yet.")
-        self.channel.dz = None
+        self.current = self.nmin
+        self.set_dz(gtLast)
     
     def guess_fluid_front(self, dt):
         gf, mf, phi = self.channel.guess_fluid_front(self.dz, dt, self.current)

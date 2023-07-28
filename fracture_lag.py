@@ -55,13 +55,19 @@ class Fracture:
     def initialize_values(self):
         gt0, gft0, Vtipt0, Vt0, xf0 = self.initializer.compute_initial_values(self.Kstar)
         self.mesh.set_dz(gt0)
-        self.mesh.init_channel(self.mesh.nmin, xf0, Vt0, self.mesh.dz)
+        self.mesh.init_channel(xf0, Vt0)
         self.Omtip = (2/3)*self.Kstar*self.mesh.dz**0.5
         O0 = self.initializer.compute_initial_mesh_values(self.mesh, gt0, xf0)
         self.dtOld = self.initializer.compute_initial_dt(self.mesh.dz, Vtipt0)
         self.set_opening(O0)
         self.lastTau = self.initializer.tau0
         return O0
+
+    def remesh(self):
+        g = self.compute_fracture_length()
+        self.mesh.remesh(g)
+
+        
     
     def compute_dimensional_parameters(self):
         raise Exception("Not implemented")
@@ -83,7 +89,7 @@ class Fracture:
         if not os.path.exists(savePath):
             os.mkdir(savePath)
             print("Directory: ", savePath, "created")
-            
+
         with open(os.path.join(savePath, 'data') + '.csv', 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(self.state)
@@ -237,22 +243,23 @@ class Fracture:
         self.step = 0
         Op_0 = self.initialize_values()
         Op_pp = None
-        #for cycle in range(self.maxCycles):
-        for n in range(self.mesh.nmin+1, self.mesh.nmax+1):
-            self.step += 1
-            
-            Op_h = self.solve_step(Op_0, Op_pp)
-            
-            if Op_pp is not None:
-                Op_pp[:] = Op_0[:]
-            else:
-                Op_pp = Op_0.copy()
-            Op_0[:] = Op_h[:]
-            
-            #if self.tau > self.taumax:
-                #break
-            #logging.warning(f"Step: {step}")
-        # problem.remesh()
+        for cycle in range(self.simProps.maxCycles):
+            for n in range(self.mesh.nmin+1, self.mesh.nmax+1):
+                self.step += 1
+                
+                Op_h = self.solve_step(Op_0, Op_pp)
+                
+                if Op_pp is not None:
+                    Op_pp[:] = Op_0[:]
+                else:
+                    Op_pp = Op_0.copy()
+                Op_0[:] = Op_h[:]
+                
+                if self.lastTau > self.simProps.taumax:
+                    brek
+                logging.warning(f"Step: {step}")
+            self.remesh()
+            logging.warning("REMESH")
         self.save_to_file()
         self.print_summary()
         
