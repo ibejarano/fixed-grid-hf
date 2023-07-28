@@ -32,7 +32,7 @@ class CartesianMesh:
     
     def init_channel(self, n, xf, V, dz):
         self.channel = FluidChannelMesh(n, xf, V, dz)
-        self.n = n
+        self.current = n
     
     def remesh(self):
         #TODO Quedan mas cositas
@@ -40,7 +40,7 @@ class CartesianMesh:
         self.channel.dz = None
     
     def guess_fluid_front(self, dt):
-        gf, mf, phi = self.channel.guess_fluid_front(self.dz, dt, self.n)
+        gf, mf, phi = self.channel.guess_fluid_front(self.dz, dt, self.current)
         return gf, mf, phi
     
     def set_dz(self, gt0):
@@ -48,9 +48,13 @@ class CartesianMesh:
         
     def get_coordinates(self):
         return self.dz*np.arange(0.5,self.current+0.5,step=1.0)
-    
-    def update(self, n):
-        self.n = n
+        
+    def limit_fluidjump(self, mf):
+        n = self.current
+        
+        mf = self.channel.limit_fluidjump(mf, n)
+        
+        return mf
 
     
 class FluidChannelMesh:

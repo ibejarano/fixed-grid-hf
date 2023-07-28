@@ -11,6 +11,13 @@ from plot_utilities import plot_variable_vs_time
 from read_ini import read_datfile_axisym
 from test_numpy_funcs import read_matrix
 
+
+def get_reference_adimensionals(ind):
+    KSTARS_REF = [0.75, 1, 1.25, 1.51, 1.8, 2.15, 1.3]
+    SSTARS_REF = [10, 10, 25, 45, 90, 5, 1]
+    return KSTARS_REF[ind-1], SSTARS_REF[ind-1]
+
+
 def calculo_Kstar():
     # K utilizados
     
