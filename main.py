@@ -6,7 +6,7 @@ from oribi_results_reference import get_all_references_case, get_reference_adime
 import matplotlib.pyplot as plt
 import numpy as np
 ###
-ref_case = 2
+ref_case = 1
 Kref, Sref = get_reference_adimensionals(ref_case)
 gt_ref, gft_ref, xft_ref, tau_ref = get_all_references_case(ref_case)
 ###
@@ -14,6 +14,7 @@ gt_ref, gft_ref, xft_ref, tau_ref = get_all_references_case(ref_case)
 mesh = CartesianMesh()
 initializer = AxisymInitializer(tau0=1e-16, name="Oribi_Overtex1.dat")
 simProps = SimulationProperties()
+simProps.taumax = 1e-13
 simProps.set_simulation_name("test")
 fracture = Fracture(mesh=mesh,initializer=initializer, simProps=simProps, Kstar=Kref, Sstar=Sref)
 fracture.run()

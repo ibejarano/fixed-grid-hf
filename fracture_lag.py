@@ -5,6 +5,7 @@ import csv
 import os
 from math import floor, sqrt, pi
 from scipy.sparse.linalg import bicgstab
+from scipy.interpolate import interp1d
 
 from oribi_dd_matrices import create_DD_Matrix
 from oribi_linksys import build_matrices
@@ -66,8 +67,23 @@ class Fracture:
     def remesh(self):
         g = self.compute_fracture_length()
         self.mesh.remesh(g)
-
+        mref, phiref, Vref = self.mesh.channel.get_channel_params()
+        gf = self.mesh.channel.g
+        xfref = gf/g
         
+        # Update channel params
+        m0 = floor(self.mesh.nmin*xfref)
+        phi0 = self.mesh.nmin * xfref - m0
+        self.mesh.channel.update(m0, phi0, Vref)
+        Oref = self.get_opening()
+        xiref = self.mesh.get_coordinates_unit(self.mesh.nmax)
+        xi = self.mesh.get_coordinates_unit(self.mesh.nmin)
+
+        Ointerp = np.zeros(Oref.shape)
+        Ointerp[:self.mesh.nmin, 0] = interp1d(xiref, Oref[:, 0], kind="cubic")(xi)
+
+        self.dtOld = self.dtOld * self.mesh.nmax / self.mesh.nmin
+        return Ointerp
     
     def compute_dimensional_parameters(self):
         raise Exception("Not implemented")
@@ -256,10 +272,13 @@ class Fracture:
                 Op_0[:] = Op_h[:]
                 
                 if self.lastTau > self.simProps.taumax:
-                    brek
-                logging.warning(f"Step: {step}")
-            self.remesh()
-            logging.warning("REMESH")
+                    break
+                logging.warning(f"Step: {self.step} : Time {self.lastTau}")
+            if self.lastTau > self.simProps.taumax:
+                    break
+            Op_0 = self.remesh()
+            Op_pp = None
+            logging.warning(f"REMESH {self.step} - {self.lastTau}")
         self.save_to_file()
         self.print_summary()
         

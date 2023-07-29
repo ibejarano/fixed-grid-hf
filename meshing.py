@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb  9 11:13:43 2023
-
-@author: YT34520
-"""
-
 import numpy as np
 import scipy as sp
 from math import floor
@@ -25,9 +18,9 @@ class CartesianMesh:
         self.channel = FluidChannelMesh(n, xf, V, dz)
     
     def remesh(self, gtLast):
-        #TODO Quedan mas cositas
         self.current = self.nmin
         self.set_dz(gtLast)
+        self.channel.dz = self.dz
     
     def guess_fluid_front(self, dt):
         gf, mf, phi = self.channel.guess_fluid_front(self.dz, dt, self.current)
@@ -38,19 +31,17 @@ class CartesianMesh:
         
     def get_coordinates(self):
         return self.dz*np.arange(0.5,self.current+0.5,step=1.0)
-        
+
+    def get_coordinates_unit(self, n):
+        return np.arange(0.5,n+0.5,step=1.0)/n
+
     def limit_fluidjump(self, mf):
         n = self.current
-        
         mf = self.channel.limit_fluidjump(mf, n)
-        
         return mf
-
     
 class FluidChannelMesh:
-    
     mjump = 10
-    
     def __init__(self, n, xft, V, dz):
         self.m = floor(xft*n)
         self.phi = n*xft - self.m
