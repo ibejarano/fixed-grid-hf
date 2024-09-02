@@ -266,7 +266,7 @@ class FHProblem:
             tr = 0 # TODO Aplicar la correccion para la tasa de inyeccion
             if mf > 1:
                 Mat, rhs, prec = build_matrices(Om0, Omk, n, mf, phi, m0, phi0, zeta, dtold, A, D, S, AllinvAlc, vecs0, self.dz, dtdz3, flux, tr)
-                res, flag = bicgstab(Mat, rhs, tol=self.eps1*10**(-3), atol=self.eps1*10**(-3), M=prec, x0=domold[:mf], maxiter=100)
+                res, flag = bicgstab(Mat, rhs, rtol=self.eps1*10**(-3), atol=self.eps1*10**(-3), M=prec, x0=domold[:mf], maxiter=100)
                 domnew[:mf] = np.expand_dims(res, axis=1)
             elif mf == 1:
                 zeta = self.get_coordinates(n)
