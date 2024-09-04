@@ -225,16 +225,12 @@ class FHProblem:
         err1 = 1
         dtdz3 = dtold / self.dz**3
         Om0 = self.Om[:, self.step - 1, None]
-        
         domnew = domold.copy()
-        n = self.nt[self.step]
+        
         while (k1 < self.k1max) and (err1 > self.eps1):
             k1 += 1
             # Computo flujo al final del canal
-            #flux = phi*Omk[mf, 0]
             flux = 0.0
-    
-            #flux = flux*(zeta[mf])*self.dz/dtold
             tr = 0 # TODO Aplicar la correccion para la tasa de inyeccion
             Mat, rhs, prec = build_matrices(Om0, Omk, mf, dtold, D, S, self.dz, dtdz3, flux, tr)
             #prec = None
@@ -304,6 +300,12 @@ if __name__ == "__main__":
         plt.title("Fluid front")
         plt.xscale("log")
         plt.yscale("log")
+        plt.show()
         #plt.xlim((tau0*Tdim, taumax*Tdim))
         #plt.ylim((np.min(problem.gft[:problem.step]),np.max(problem.gft[:problem.step])))
-        plt.show()
+
+        out = np.column_stack((problem.tau[:problem.step] * Tdim, problem.gt[:problem.step] * Ldim))
+        rows = ["{},{}".format(i, j) for i, j in out] 
+        text = "\n".join(rows)
+        with open('outputs/out.csv', 'w') as f: 
+            f.write(text)

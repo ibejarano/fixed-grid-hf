@@ -8,8 +8,8 @@ tolerances:
   eps3: 1e-3
 mesh:
   n0: 10
-  nmax: 50
-  ncycles: 10
+  nmax: 100
+  ncycles: 4
   mjump: 10
 time_parameters:
   tau0: 1e-16
