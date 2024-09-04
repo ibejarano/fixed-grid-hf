@@ -9,44 +9,37 @@ import numpy as np
 from numpy import diag
 from scipy.sparse.linalg import LinearOperator, spilu
 
-def build_matrices(Om0, Omk, n, mf, phi, m0, phi0, zeta, dtold, A, D, S, AllinvAlc, vects0, dz, dtdz3, flux, tr):
-    d = 2 #Para problema axisym
-    Mat = np.zeros((mf, mf))
-    Kw = np.zeros((mf, 1))
-    Ke = np.zeros((mf, 1))
-    Kc = np.zeros((mf, 1))
+def build_matrices(Om0, Omk, n, dtold, D, S, dz, dtdz3, flux, tr):
+    d = 1 #Para problema plano
+    Mat = np.zeros((n, n))
+    Kw = np.zeros((n, 1))
+    Ke = np.zeros((n, 1))
+    Kc = np.zeros((n, 1))
     
-    Kw[1:mf] = (0.5*(Omk[:mf-1] + Omk[1:mf]))**3
-    Ke[:mf] = (0.5*(Omk[:mf] + Omk[1:mf+1]))**3
-    Kw[1:mf] = Kw[1:mf] * (0.5*(zeta[:mf-1, None] + zeta[1:mf, None]))/zeta[1:mf, None]
-    Ke[:mf] = Ke[:mf] * (0.5*(zeta[:mf, None] + zeta[1:mf+1, None]))/zeta[:mf, None]
-    
+    OpeningHalfElem = 0.5*(Omk[:-1] + Omk[1:])
+    Kw[1:] = OpeningHalfElem**3
+    Ke[:-1] = OpeningHalfElem**3
     Kc = Kw+Ke
-    Mat[0, :mf] = (-Kc[0]*D[0,:mf] + Ke[0]*D[1,:mf])*dtdz3
+
+    Mat[0, :] = (-Ke[0]*D[0,:] + Ke[0]*D[1,:])*dtdz3   
+    Mat[1:-1, :] = (Kw[1:-1]*D[:-2, :] - Kc[1:-1]*D[1:-1, :] + Ke[1:-1]*D[2:, :])*dtdz3
+    Mat[-1, :] = (Kw[-1]*D[-2, :] - Kw[-1]*D[-1, :] )*dtdz3
     
-    # TODO Vectorizar
-    for i in range(1, mf-1):
-        Mat[i, :mf] = (Kw[i]*D[i-1, :mf] - Kc[i]*D[i, :mf] + Ke[i]*D[i+1, :mf])*dtdz3
+    G = Mat@Om0[:n]
     
-    Mat[mf-1, :mf] = (Kw[mf-1]*D[mf-2, :mf] - Kw[mf-1]*D[mf-1, :mf] )*dtdz3
+    #TODO Vectorizar
+    dtdz2 = dtdz3 * dz
+    G[0] = G[0] + (1+tr)*dtold/dz - (-Kc[0]*S[0]+Ke[0]*S[1])*dtdz2
     
-    G = Mat@Om0[:mf]
+    for i in range(1, n-1):
+        G[i] = G[i] - (Kw[i]@S[i-1] - Kc[i]@S[i] + Ke[i]@S[i+1])*dtdz2
     
-    G[0] = G[0] + (1+tr)*0.5/(pi*zeta[0])*dtold/dz - (-Kc[0]*S[0]+Ke[0]*S[1])*dtdz3
-    for i in range(1, mf-1):
-        G[i] = G[i] - (Kw[i]@S[i-1] - Kc[i]@S[i] + Ke[i]@S[i+1])*dtdz3
-    
-    G[mf-1] = G[mf-1] - flux/(zeta[mf-1]**(d-1))*dtold/dz - (Kw[mf-1]@S[mf-2] - Kw[mf-1]@S[mf-1])*dtdz3
-    
-    if mf>m0:
-        G[m0] = G[m0] - (1- phi0)*Om0[m0]
-        if mf > m0+1:
-            G[m0+1:mf] = G[m0+1:mf] - Om0[m0+1:mf]
-        
+    G[n-1] = G[n-1] - flux*dtold/dz - (Kw[n-1]@S[n-2] - Kw[n-1]@S[n-1])*dtdz2
+            
     # Solo para solver de punto fijo
-    Mat = np.eye(mf) - Mat
+    Mat = np.eye(n) - Mat
     rhs = G
-    prec = build_precond(mf, D, Kc, Ke, Kw, dtdz3)
+    prec = build_precond(n, D, Kc, Ke, Kw, dtdz3)
     return Mat, rhs, prec
 
 def build_precond(mf, D, Kc, Ke, Kw, dtdz3):

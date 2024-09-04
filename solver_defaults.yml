@@ -7,15 +7,15 @@ tolerances:
   eps2: 1e-4
   eps3: 1e-3
 mesh:
-  n0: 60
-  nmax: 90
-  ncycles: 20
+  n0: 10
+  nmax: 50
+  ncycles: 10
   mjump: 10
 time_parameters:
   tau0: 1e-16
-  taumax: 1e-10
+  taumax: 1e-4
   dtratio: 1.05
 parameters:
   Sstar: 0.18311
-  Kstar: 10.74
+  Kstar: 10.74  
 dat_filepath: Oribi_Overtex1.dat
